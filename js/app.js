@@ -237,8 +237,8 @@ document.addEventListener('DOMContentLoaded', () => {
       showAiStatus('Sáng tác hoàn tất! Bạn có thể dùng bài thơ này để kiểm tra luật.', 'info');
     } catch (err) {
       let msg = err.message;
-      if (msg.includes('not found') && msg.includes('gemini') && msg.includes('pro')) {
-        msg += ' Gợi ý: thử chọn mô hình "gemini-1.5-flash-latest" nếu bạn đang dùng API key miễn phí (free tier). Các key miễn phí thường không hỗ trợ model Pro.';
+      if (msg.includes('not found') && msg.includes('gemini')) {
+        msg += ' \n\nGợi ý: Nếu bạn đã tạo key từ Google Cloud Console (Vertex AI), hãy tạo key MIỄN PHÍ tại https://aistudio.google.com/app/apikey thay thế.';
       }
       showAiStatus('Lỗi: ' + msg, 'error');
     } finally {

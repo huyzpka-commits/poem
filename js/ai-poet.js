@@ -129,8 +129,8 @@ YÊU CẦU ĐẦU RA:
     return data.choices?.[0]?.message?.content?.trim() || '';
   }
 
-  async function callGeminiSingle(apiKey, model, systemPrompt, userPrompt) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  async function callGeminiSingle(apiKey, model, systemPrompt, userPrompt, apiVersion = 'v1beta') {
+    const url = `https://generativelanguage.googleapis.com/${apiVersion}/models/${model}:generateContent?key=${apiKey}`;
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -149,7 +149,7 @@ YÊU CẦU ĐẦU RA:
   }
 
   async function callGemini(apiKey, model, systemPrompt, userPrompt) {
-    // Try multiple model names as fallback because exact names vary by region/key
+    // Try multiple model names AND API versions as fallback
     const fallbackModels = [
       model,
       'gemini-1.5-flash-002',
@@ -162,22 +162,26 @@ YÊU CẦU ĐẦU RA:
       'gemini-pro'
     ];
     const uniqueModels = [...new Set(fallbackModels)];
+    const versions = ['v1beta', 'v1'];
     let lastError = '';
 
-    for (const m of uniqueModels) {
-      try {
-        const text = await callGeminiSingle(apiKey, m, systemPrompt, userPrompt);
-        if (text) return text;
-      } catch (e) {
-        const msg = e.message || '';
-        if (msg.toLowerCase().includes('not found') || (msg.toLowerCase().includes('invalid') && msg.toLowerCase().includes('model'))) {
-          lastError = msg;
-          continue; // try next model name
+    for (const v of versions) {
+      for (const m of uniqueModels) {
+        try {
+          const text = await callGeminiSingle(apiKey, m, systemPrompt, userPrompt, v);
+          if (text) return text;
+        } catch (e) {
+          const msg = (e.message || '').toLowerCase();
+          if (msg.includes('not found') || (msg.includes('invalid') && msg.includes('model'))) {
+            lastError = e.message;
+            continue; // try next combination
+          }
+          // For other errors (e.g., unauthorized, quota), stop immediately and report
+          throw e;
         }
-        throw e;
       }
     }
-    throw new Error(`Không tìm thấy model khả dụng. Đã thử: ${uniqueModels.join(', ')}. Lỗi: ${lastError}.\n\nGợi ý: Kiểm tra API key tại https://aistudio.google.com/app/apikey và đảm bảo bạn đã bật "Generative Language API". Key phải bắt đầu bằng "AIza".`);
+    throw new Error(`Không tìm thấy model khả dụng. Đã thử ${uniqueModels.length} model x ${versions.length} phiên bản API.\nLỗi cuối: ${lastError}\n\nNGUYÊN NHÂN PHỔ BIẾN:\n1. API key được tạo từ Google Cloud Console (Vertex AI) thay vì Google AI Studio.\n   -> Vui lòng tạo key MIỄN PHÍ tại https://aistudio.google.com/app/apikey\n2. API key đúng nhưng chưa bật "Generative Language API" trong Google Cloud project.\n3. Key hết hạn hoặc bị giới hạn region.\n\nKey Gemini AI Studio phải bắt đầu bằng "AIza" và được tạo tại aistudio.google.com.`);
   }
 
   async function listGeminiModels(apiKey) {
