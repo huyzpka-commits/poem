@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Văn Thơ Việt - Trợ thủ viết thơ truyền thống</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=2">
+  <link rel="stylesheet" href="css/style.css?v=3">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -47,14 +47,14 @@
         </div>
         <div class="ai-field">
           <label for="ai-model">Mô hình</label>
-          <input type="text" id="ai-model" list="model-suggestions" value="gpt-4o-mini" placeholder="gpt-4o-mini hoặc gemini-1.5-flash-latest...">
+          <input type="text" id="ai-model" list="model-suggestions" value="gpt-4o-mini" placeholder="gpt-4o-mini hoặc gemini-1.5-flash...">
           <datalist id="model-suggestions">
             <option value="gpt-4o-mini">
             <option value="gpt-4o">
-            <option value="gemini-1.5-flash-latest">
-            <option value="gemini-1.5-pro-latest">
+            <option value="gemini-1.5-flash">
+            <option value="gemini-1.5-pro">
           </datalist>
-          <small class="key-hint">Key Gemini miễn phí thường chỉ hỗ trợ model Flash. Nếu lỗi "not found", hãy thử <b>gemini-1.5-flash-latest</b>.</small>
+          <small class="key-hint">Key Gemini miễn phí thường chỉ hỗ trợ model Flash. Nếu lỗi "not found", hãy thử <b>gemini-1.5-flash</b> (không cần thêm -latest).</small>
         </div>
         <div class="ai-field full">
           <label for="ai-key">API Key <small class="key-hint">(chỉ lưu trên trình duyệt của bạn)</small></label>
@@ -106,9 +106,9 @@
     <p>Văn Thơ Việt - Ứng dụng hỗ trợ sáng tác thơ truyền thống & hiện đại.</p>
   </footer>
 
-  <script src="js/vietnamese-utils.js?v=2"></script>
-  <script src="js/poem-analyzer.js?v=2"></script>
-  <script src="js/ai-poet.js?v=2"></script>
-  <script src="js/app.js?v=2"></script>
+  <script src="js/vietnamese-utils.js?v=3"></script>
+  <script src="js/poem-analyzer.js?v=3"></script>
+  <script src="js/ai-poet.js?v=3"></script>
+  <script src="js/app.js?v=3"></script>
 </body>
 </html>

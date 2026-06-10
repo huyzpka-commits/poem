@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const providerDefaultModels = {
     openai: 'gpt-4o-mini',
-    gemini: 'gemini-1.5-flash-latest'
+    gemini: 'gemini-1.5-flash'
   };
 
   function updateDescription() {
@@ -119,8 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
     aiProvider.value = AIPoet.loadProvider();
     aiKey.value = AIPoet.loadKey();
     const savedModel = AIPoet.loadModel();
-    // If saved model looks like an old invalid Gemini name (no -latest suffix), reset to default
-    if (savedModel && savedModel.startsWith('gemini-') && !savedModel.endsWith('-latest') && !savedModel.match(/-\d{3}$/)) {
+    // If saved model ends with old -latest suffix (invalid), reset to default
+    if (savedModel && savedModel.endsWith('-latest')) {
       aiModel.value = providerDefaultModels[aiProvider.value] || '';
     } else {
       aiModel.value = savedModel || providerDefaultModels[aiProvider.value] || '';
