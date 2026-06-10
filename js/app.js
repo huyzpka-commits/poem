@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const typeDescriptions = {
-    lucbat: 'Lục bát: 1 câu 6 chữ, 1 câu 8 chữ. Gieo vần chân, vần lưng. Nhịp chẵn (2/2/2).',
+    lucbat: 'Lục bát: câu lục 6 chữ, câu bát 8 chữ. Chữ thứ 6 của câu lục và chữ thứ 6 của câu bát vần lưng (thanh trắc). Chữ thứ 8 của câu bát vần chân (thanh bằng) với chữ thứ 8 câu bát trước. Nhịp chẵn (2/2/2).',
     songthatlucbat: 'Song thất lục bát: Khổ 4 câu 7-7-6-8. Vần bằng/trắc đan xen.',
     hatnoi: 'Hát nói: Nhịp tự do. Dùng trong nghệ thuật ca trù.',
     thatngonbatcu: 'Thất ngôn bát cú: 8 câu, 7 chữ/câu. Luật bằng/trắc khắt khe. Bố cục: Đề, Thực Luận, Kết.',

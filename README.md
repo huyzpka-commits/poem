@@ -13,7 +13,7 @@
 ## Các thể thơ được hỗ trợ
 
 ### 1. Thơ Dân Tộc
-- **Lục bát**: Kiểm tra cặp câu 6-8 chữ, vần chân, vần lưng, nhịp chẵn (2/2/2), thanh vần bằng/trắc.
+- **Lục bát**: Câu lục 6 chữ, câu bát 8 chữ. Chữ thứ 6 của câu lục và chữ thứ 6 của câu bát vần lưng (thanh trắc). Chữ thứ 8 của câu bát vần chân (thanh bằng) với chữ thứ 8 câu bát trước. Nhịp chẵn (2/2/2).
 - **Song thất lục bát**: Khổ 4 câu (7-7-6-8), vần chân khổ, vần lưng, thanh bằng/trắc đan xen.
 - **Hát nói**: Nhận diện cấu trúc tự do, dùng trong nghệ thuật ca trù.
 
