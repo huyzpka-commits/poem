@@ -149,6 +149,38 @@ document.addEventListener('DOMContentLoaded', () => {
     showAiStatus('Đã xóa API key khỏi trình duyệt.', 'info');
   });
 
+  const testKeyBtn = document.getElementById('test-key-btn');
+  if (testKeyBtn) {
+    testKeyBtn.addEventListener('click', async () => {
+      hideAiStatus();
+      const key = aiKey.value.trim();
+      if (!key) {
+        showAiStatus('Vui lòng nhập API key trước khi kiểm tra.', 'error');
+        return;
+      }
+      if (aiProvider.value === 'gemini') {
+        if (!key.startsWith('AIza')) {
+          showAiStatus('Key Gemini thường bắt đầu bằng "AIza". Vui lòng kiểm tra lại key tại https://aistudio.google.com/app/apikey', 'error');
+          return;
+        }
+        showAiStatus('Đang kiểm tra key và liệt kê model khả dụng...', 'info');
+        try {
+          const models = await AIPoet.listGeminiModels(key);
+          if (!models.length) {
+            showAiStatus('API key hợp lệ nhưng không có model nào khả dụng. Key có thể bị giới hạn hoặc chưa bật Generative Language API.', 'error');
+            return;
+          }
+          const names = models.map(m => m.name?.replace('models/', '') || m.name).filter(Boolean).join(', ');
+          showAiStatus(`Key hợp lệ! Các model khả dụng: ${names}. Hãy chọn một tên model trong ô "Mô hình" và bấm Lưu key.`, 'info');
+        } catch (err) {
+          showAiStatus('Lỗi kiểm tra key: ' + err.message, 'error');
+        }
+      } else {
+        showAiStatus('Kiểm tra OpenAI key cần gọi API (tốn token). Hãy thử "Sáng tác bằng AI" để kiểm tra.', 'info');
+      }
+    });
+  }
+
   function showAiStatus(msg, kind) {
     let el = document.getElementById('ai-status');
     if (!el) {

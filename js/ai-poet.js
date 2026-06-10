@@ -129,7 +129,7 @@ YÊU CẦU ĐẦU RA:
     return data.choices?.[0]?.message?.content?.trim() || '';
   }
 
-  async function callGemini(apiKey, model, systemPrompt, userPrompt) {
+  async function callGeminiSingle(apiKey, model, systemPrompt, userPrompt) {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
     const res = await fetch(url, {
       method: 'POST',
@@ -146,6 +146,48 @@ YÊU CẦU ĐẦU RA:
     }
     const data = await res.json();
     return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+  }
+
+  async function callGemini(apiKey, model, systemPrompt, userPrompt) {
+    // Try multiple model names as fallback because exact names vary by region/key
+    const fallbackModels = [
+      model,
+      'gemini-1.5-flash-002',
+      'gemini-1.5-flash-001',
+      'gemini-1.5-flash',
+      'gemini-2.0-flash-exp',
+      'gemini-1.5-pro-002',
+      'gemini-1.5-pro-001',
+      'gemini-1.5-pro',
+      'gemini-pro'
+    ];
+    const uniqueModels = [...new Set(fallbackModels)];
+    let lastError = '';
+
+    for (const m of uniqueModels) {
+      try {
+        const text = await callGeminiSingle(apiKey, m, systemPrompt, userPrompt);
+        if (text) return text;
+      } catch (e) {
+        const msg = e.message || '';
+        if (msg.toLowerCase().includes('not found') || (msg.toLowerCase().includes('invalid') && msg.toLowerCase().includes('model'))) {
+          lastError = msg;
+          continue; // try next model name
+        }
+        throw e;
+      }
+    }
+    throw new Error(`Không tìm thấy model khả dụng. Đã thử: ${uniqueModels.join(', ')}. Lỗi: ${lastError}.\n\nGợi ý: Kiểm tra API key tại https://aistudio.google.com/app/apikey và đảm bảo bạn đã bật "Generative Language API". Key phải bắt đầu bằng "AIza".`);
+  }
+
+  async function listGeminiModels(apiKey) {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}&pageSize=50`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    return data.models || [];
   }
 
   async function compose(type, subject, hint, provider, apiKey, model) {
@@ -176,6 +218,7 @@ YÊU CẦU ĐẦU RA:
   return {
     providers,
     compose,
+    listGeminiModels,
     saveKey, loadKey,
     saveProvider, loadProvider,
     saveModel, loadModel,
