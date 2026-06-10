@@ -45,9 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
     thovanxuoi: 'Thơ văn xuôi: Viết dạng đoạn văn. Không xuống dòng theo câu. Tạo nhạc điệu bằng từ ngữ.'
   };
 
-  const providerModels = {
-    openai: ['gpt-4o-mini', 'gpt-4o'],
-    gemini: ['gemini-1.5-flash', 'gemini-1.5-pro']
+  const providerDefaultModels = {
+    openai: 'gpt-4o-mini',
+    gemini: 'gemini-1.5-flash-latest'
   };
 
   function updateDescription() {
@@ -117,21 +117,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- AI Panel Logic ---
   function loadSavedAI() {
     aiProvider.value = AIPoet.loadProvider();
-    aiModel.value = AIPoet.loadModel();
     aiKey.value = AIPoet.loadKey();
+    const savedModel = AIPoet.loadModel();
+    // If saved model looks like an old invalid Gemini name (no -latest suffix), reset to default
+    if (savedModel && savedModel.startsWith('gemini-') && !savedModel.endsWith('-latest') && !savedModel.match(/-\d{3}$/)) {
+      aiModel.value = providerDefaultModels[aiProvider.value] || '';
+    } else {
+      aiModel.value = savedModel || providerDefaultModels[aiProvider.value] || '';
+    }
   }
   loadSavedAI();
 
   aiProvider.addEventListener('change', () => {
-    const models = providerModels[aiProvider.value] || [];
-    aiModel.innerHTML = '';
-    models.forEach(m => {
-      const opt = document.createElement('option');
-      opt.value = m;
-      opt.textContent = m;
-      aiModel.appendChild(opt);
-    });
-    aiModel.value = models[0] || '';
+    aiModel.value = providerDefaultModels[aiProvider.value] || '';
   });
 
   toggleKeyBtn.addEventListener('click', () => {
@@ -206,7 +204,11 @@ document.addEventListener('DOMContentLoaded', () => {
       aiUseBtn.style.display = 'inline-block';
       showAiStatus('Sáng tác hoàn tất! Bạn có thể dùng bài thơ này để kiểm tra luật.', 'info');
     } catch (err) {
-      showAiStatus('Lỗi: ' + err.message, 'error');
+      let msg = err.message;
+      if (msg.includes('not found') && msg.includes('gemini') && msg.includes('pro')) {
+        msg += ' Gợi ý: thử chọn mô hình "gemini-1.5-flash-latest" nếu bạn đang dùng API key miễn phí (free tier). Các key miễn phí thường không hỗ trợ model Pro.';
+      }
+      showAiStatus('Lỗi: ' + msg, 'error');
     } finally {
       setLoading(false);
     }

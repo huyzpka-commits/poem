@@ -16,7 +16,7 @@ const AIPoet = (function() {
     gemini: {
       name: 'Google Gemini',
       baseUrl: 'https://generativelanguage.googleapis.com/v1beta/models',
-      defaultModel: 'gemini-1.5-flash'
+      defaultModel: 'gemini-1.5-flash-latest'
     }
   };
 
