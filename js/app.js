@@ -5,20 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultDiv = document.getElementById('result');
   const clearBtn = document.getElementById('clear-btn');
 
-  // AI elements
-  const aiProvider = document.getElementById('ai-provider');
-  const aiModel = document.getElementById('ai-model');
-  const aiKey = document.getElementById('ai-key');
-  const toggleKeyBtn = document.getElementById('toggle-key');
-  const saveKeyBtn = document.getElementById('save-key-btn');
-  const clearKeyBtn = document.getElementById('clear-key-btn');
-  const aiSubject = document.getElementById('ai-subject');
-  const aiHint = document.getElementById('ai-hint');
-  const aiComposeBtn = document.getElementById('ai-compose-btn');
-  const aiUseBtn = document.getElementById('ai-use-btn');
-  const aiResultArea = document.getElementById('ai-result-area');
-  const aiResult = document.getElementById('ai-result');
-
   const typeLabels = {
     lucbat: 'Lục Bát',
     songthatlucbat: 'Song Thất Lục Bát',
@@ -43,11 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
     thotudo: 'Thơ tự do: Không giới hạn số chữ, số câu. Cảm xúc định nhịp.',
     tho578: 'Thơ 5, 7, 8 chữ: Kế thừa form truyền thống. Phá vỡ luật bằng/trắc cổ điển.',
     thovanxuoi: 'Thơ văn xuôi: Viết dạng đoạn văn. Không xuống dòng theo câu. Tạo nhạc điệu bằng từ ngữ.'
-  };
-
-  const providerDefaultModels = {
-    openai: 'gpt-4o-mini',
-    gemini: 'gemini-1.5-flash'
   };
 
   function updateDescription() {
@@ -113,146 +94,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     resultDiv.innerHTML = html;
   }
-
-  // --- AI Panel Logic ---
-  function loadSavedAI() {
-    aiProvider.value = AIPoet.loadProvider();
-    aiKey.value = AIPoet.loadKey();
-    const savedModel = AIPoet.loadModel();
-    // If saved model ends with old -latest suffix (invalid), reset to default
-    if (savedModel && savedModel.endsWith('-latest')) {
-      aiModel.value = providerDefaultModels[aiProvider.value] || '';
-    } else {
-      aiModel.value = savedModel || providerDefaultModels[aiProvider.value] || '';
-    }
-  }
-  loadSavedAI();
-
-  aiProvider.addEventListener('change', () => {
-    aiModel.value = providerDefaultModels[aiProvider.value] || '';
-  });
-
-  toggleKeyBtn.addEventListener('click', () => {
-    aiKey.type = aiKey.type === 'password' ? 'text' : 'password';
-  });
-
-  saveKeyBtn.addEventListener('click', () => {
-    AIPoet.saveKey(aiKey.value.trim());
-    AIPoet.saveProvider(aiProvider.value);
-    AIPoet.saveModel(aiModel.value);
-    showAiStatus('Đã lưu API key và cài đặt trên trình duyệt này.', 'info');
-  });
-
-  clearKeyBtn.addEventListener('click', () => {
-    AIPoet.clearStorage();
-    aiKey.value = '';
-    showAiStatus('Đã xóa API key khỏi trình duyệt.', 'info');
-  });
-
-  const testKeyBtn = document.getElementById('test-key-btn');
-  if (testKeyBtn) {
-    testKeyBtn.addEventListener('click', async () => {
-      hideAiStatus();
-      const key = aiKey.value.trim();
-      if (!key) {
-        showAiStatus('Vui lòng nhập API key trước khi kiểm tra.', 'error');
-        return;
-      }
-      if (aiProvider.value === 'gemini') {
-        if (!key.startsWith('AIza')) {
-          showAiStatus('Key Gemini thường bắt đầu bằng "AIza". Vui lòng kiểm tra lại key tại https://aistudio.google.com/app/apikey', 'error');
-          return;
-        }
-        showAiStatus('Đang kiểm tra key và liệt kê model khả dụng...', 'info');
-        try {
-          const models = await AIPoet.listGeminiModels(key);
-          if (!models.length) {
-            showAiStatus('API key hợp lệ nhưng không có model nào khả dụng. Key có thể bị giới hạn hoặc chưa bật Generative Language API.', 'error');
-            return;
-          }
-          const names = models.map(m => m.name?.replace('models/', '') || m.name).filter(Boolean).join(', ');
-          showAiStatus(`Key hợp lệ! Các model khả dụng: ${names}. Hãy chọn một tên model trong ô "Mô hình" và bấm Lưu key.`, 'info');
-        } catch (err) {
-          showAiStatus('Lỗi kiểm tra key: ' + err.message, 'error');
-        }
-      } else {
-        showAiStatus('Kiểm tra OpenAI key cần gọi API (tốn token). Hãy thử "Sáng tác bằng AI" để kiểm tra.', 'info');
-      }
-    });
-  }
-
-  function showAiStatus(msg, kind) {
-    let el = document.getElementById('ai-status');
-    if (!el) {
-      el = document.createElement('div');
-      el.id = 'ai-status';
-      el.className = 'ai-status';
-      aiComposeBtn.parentElement.insertAdjacentElement('afterend', el);
-    }
-    el.className = 'ai-status ' + kind;
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
-
-  function hideAiStatus() {
-    const el = document.getElementById('ai-status');
-    if (el) el.style.display = 'none';
-  }
-
-  function setLoading(isLoading) {
-    const btnText = aiComposeBtn.querySelector('.btn-text');
-    const spinner = aiComposeBtn.querySelector('.spinner');
-    aiComposeBtn.disabled = isLoading;
-    btnText.textContent = isLoading ? 'Đang sáng tác...' : 'Sáng tác bằng AI';
-    spinner.style.display = isLoading ? 'inline-block' : 'none';
-  }
-
-  aiComposeBtn.addEventListener('click', async () => {
-    hideAiStatus();
-    const key = aiKey.value.trim();
-    if (!key) {
-      showAiStatus('Vui lòng nhập API key.', 'error');
-      return;
-    }
-    const type = typeSelect.value;
-    const subject = aiSubject.value.trim();
-    const hint = aiHint.value.trim();
-    const provider = aiProvider.value;
-    const model = aiModel.value;
-
-    setLoading(true);
-    aiUseBtn.style.display = 'none';
-    aiResultArea.style.display = 'none';
-    aiResult.value = '';
-
-    try {
-      const poem = await AIPoet.compose(type, subject, hint, provider, key, model);
-      if (!poem) {
-        showAiStatus('AI trả về kết quả rỗng. Vui lòng thử lại.', 'error');
-        return;
-      }
-      aiResult.value = poem;
-      aiResultArea.style.display = 'block';
-      aiUseBtn.style.display = 'inline-block';
-      showAiStatus('Sáng tác hoàn tất! Bạn có thể dùng bài thơ này để kiểm tra luật.', 'info');
-    } catch (err) {
-      let msg = err.message;
-      if (msg.includes('not found') && msg.includes('gemini')) {
-        msg += ' \n\nGợi ý: Nếu bạn đã tạo key từ Google Cloud Console (Vertex AI), hãy tạo key MIỄN PHÍ tại https://aistudio.google.com/app/apikey thay thế.';
-      }
-      showAiStatus('Lỗi: ' + msg, 'error');
-    } finally {
-      setLoading(false);
-    }
-  });
-
-  aiUseBtn.addEventListener('click', () => {
-    if (aiResult.value) {
-      inputArea.value = aiResult.value;
-      aiResultArea.style.display = 'none';
-      aiUseBtn.style.display = 'none';
-      inputArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      showAiStatus('Bài thơ đã được chuyển sang khung nhập. Bấm "Phân tích & Kiểm tra" để kiểm tra luật.', 'info');
-    }
-  });
 });

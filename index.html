@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Văn Thơ Việt - Trợ thủ viết thơ truyền thống</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=6">
+  <link rel="stylesheet" href="css/style.css?v=7">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -35,59 +35,6 @@
       <p class="description" id="type-description"></p>
     </section>
 
-    <section class="panel ai-panel">
-      <h2>Viết thơ bằng AI</h2>
-      <div class="ai-grid">
-        <div class="ai-field">
-          <label for="ai-provider">Nhà cung cấp AI</label>
-          <select id="ai-provider">
-            <option value="openai">OpenAI (GPT-4o mini)</option>
-            <option value="gemini">Google Gemini (Flash)</option>
-          </select>
-        </div>
-        <div class="ai-field">
-          <label for="ai-model">Mô hình</label>
-          <input type="text" id="ai-model" list="model-suggestions" value="gpt-4o-mini" placeholder="gpt-4o-mini hoặc gemini-1.5-flash...">
-          <datalist id="model-suggestions">
-            <option value="gpt-4o-mini">
-            <option value="gpt-4o">
-            <option value="gemini-1.5-flash">
-            <option value="gemini-1.5-pro">
-          </datalist>
-          <small class="key-hint">Key Gemini miễn phí thường chỉ hỗ trợ model Flash. Nếu lỗi "not found", hãy thử <b>gemini-1.5-flash</b> (không cần thêm -latest).</small>
-        </div>
-        <div class="ai-field full">
-          <label for="ai-key">API Key <small class="key-hint">(chỉ lưu trên trình duyệt của bạn)</small></label>
-          <div class="key-row">
-            <input type="password" id="ai-key" placeholder="sk-... hoặc AIza...">
-            <button id="toggle-key" class="secondary" type="button" title="Hiện/ẩn">&#128065;</button>
-            <button id="save-key-btn" class="secondary" type="button">Lưu key</button>
-            <button id="clear-key-btn" class="secondary danger" type="button">Xóa key</button>
-            <button id="test-key-btn" class="secondary" type="button" title="Liệt kê model khả dụng">Kiểm tra</button>
-          </div>
-        </div>
-        <div class="ai-field full">
-          <label for="ai-subject">Chủ đề / Tựa đề</label>
-          <input type="text" id="ai-subject" placeholder="Ví dụ: mùa thu, tình yêu, quê hương...">
-        </div>
-        <div class="ai-field full">
-          <label for="ai-hint">Gợi ý nội dung <small>(tùy chọn)</small></label>
-          <textarea id="ai-hint" rows="3" placeholder="Mô tả cảm xúc, hình ảnh, màu sắc, bối cảnh bạn muốn thơ thể hiện..."></textarea>
-        </div>
-      </div>
-      <div class="button-row">
-        <button id="ai-compose-btn" class="primary">
-          <span class="btn-text">Sáng tác bằng AI</span>
-          <span class="spinner" style="display:none;"></span>
-        </button>
-        <button id="ai-use-btn" class="secondary" style="display:none;" type="button">Dùng bài thơ này để phân tích</button>
-      </div>
-      <div id="ai-result-area" style="display:none; margin-top:1rem;">
-        <label>Bài thơ do AI sáng tác</label>
-        <textarea id="ai-result" readonly rows="10"></textarea>
-      </div>
-    </section>
-
     <section class="panel">
       <h2>Nhập bài thơ</h2>
       <label for="poem-input">Nội dung (mỗi câu một dòng)</label>
@@ -107,9 +54,8 @@
     <p>Văn Thơ Việt - Ứng dụng hỗ trợ sáng tác thơ truyền thống & hiện đại.</p>
   </footer>
 
-  <script src="js/vietnamese-utils.js?v=6"></script>
-  <script src="js/poem-analyzer.js?v=6"></script>
-  <script src="js/ai-poet.js?v=6"></script>
-  <script src="js/app.js?v=6"></script>
+  <script src="js/vietnamese-utils.js?v=7"></script>
+  <script src="js/poem-analyzer.js?v=7"></script>
+  <script src="js/app.js?v=7"></script>
 </body>
 </html>
