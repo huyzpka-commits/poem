@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Văn Thơ Việt - Trợ thủ viết thơ truyền thống</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Văn Thơ Việt</h1>
+    <p>Trợ thủ viết thơ & kiểm tra luật bằng trắc, vần, nhịp</p>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <h2>Chọn thể thơ</h2>
+      <label for="poem-type">Thể loại</label>
+      <select id="poem-type">
+        <option value="lucbat">Thơ Dân Tộc - Lục Bát</option>
+        <option value="songthatlucbat">Thơ Dân Tộc - Song Thất Lục Bát</option>
+        <option value="hatnoi">Thơ Dân Tộc - Hát Nói</option>
+        <option value="thatngonbatcu">Thơ Đường Luật - Thất Ngôn Bát Cú</option>
+        <option value="thatngontutuyet">Thơ Đường Luật - Thất Ngôn Tứ Tuyệt</option>
+        <option value="ngungonbatcu">Thơ Đường Luật - Ngũ Ngôn Bát Cú</option>
+        <option value="ngungontutuyet">Thơ Đường Luật - Ngũ Ngôn Tứ Tuyệt</option>
+        <option value="thotudo">Thơ Hiện Đại - Thơ Tự Do</option>
+        <option value="tho578">Thơ Hiện Đại - Thơ 5, 7, 8 Chữ</option>
+        <option value="thovanxuoi">Thơ Hiện Đại - Thơ Văn Xuôi</option>
+      </select>
+      <p class="description" id="type-description"></p>
+    </section>
+
+    <section class="panel">
+      <h2>Nhập bài thơ</h2>
+      <label for="poem-input">Nội dung (mỗi câu một dòng)</label>
+      <textarea id="poem-input" placeholder="Mỗi câu thơ viết trên một dòng..."></textarea>
+      <div class="button-row">
+        <button id="analyze-btn" class="primary">Phân tích & Kiểm tra</button>
+        <button id="clear-btn" class="secondary">Xóa</button>
+      </div>
+    </section>
+
+    <section id="result" class="panel" style="display:none;">
+      <!-- Kết quả sẽ được render vào đây -->
+    </section>
+  </main>
+
+  <footer>
+    <p>Văn Thơ Việt - Ứng dụng hỗ trợ sáng tác thơ truyền thống & hiện đại.</p>
+  </footer>
+
+  <script src="js/vietnamese-utils.js"></script>
+  <script src="js/poem-analyzer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
