@@ -26,6 +26,14 @@ const PoemAnalyzer = (function() {
     result.info.push({ line: lineIdx + 1, message });
   }
 
+  // Helper: tạo gợi ý từ vần
+  function suggestRhyme(word, desiredTone) {
+    if (typeof RHYME_SUGGESTIONS !== 'undefined' && RHYME_SUGGESTIONS.formatSuggestion) {
+      return RHYME_SUGGESTIONS.formatSuggestion(word, word, desiredTone);
+    }
+    return '';
+  }
+
   function analyzeLucBat(lines) {
     const result = createBaseResult(lines);
     const n = result.lines.length;
@@ -70,7 +78,7 @@ const PoemAnalyzer = (function() {
         }
         if (curr.words.length >= 6 && prev.words.length >= 6) {
           if (!isRhyme(curr.words[5], prev.words[5])) {
-            addError(result, i, `Vần lưng không khớp: chữ thứ 6 "${curr.words[5]}" không vần với chữ thứ 6 câu lục trước "${prev.words[5]}".`);
+            addError(result, i, `Vần lưng không khớp: chữ thứ 6 "${curr.words[5]}" không vần với chữ thứ 6 câu lục trước "${prev.words[5]}".${suggestRhyme(curr.words[5], 'trắc')}`);
           } else {
             addInfo(result, i, 'Vần lưng khớp.');
             if (getTone(curr.words[5]) !== 'trắc') {
@@ -85,7 +93,7 @@ const PoemAnalyzer = (function() {
         // câu lục (lẻ, index 2,4,6...) i>=2
         if (curr.words.length >= 6 && prev.words.length >= 6) {
           if (!isRhyme(curr.words[5], prev.words[5])) {
-            addError(result, i, `Vần lưng không khớp: chữ thứ 6 "${curr.words[5]}" không vần với chữ thứ 6 câu bát trước "${prev.words[5]}".`);
+            addError(result, i, `Vần lưng không khớp: chữ thứ 6 "${curr.words[5]}" không vần với chữ thứ 6 câu bát trước "${prev.words[5]}".${suggestRhyme(curr.words[5], 'trắc')}`);
           } else {
             addInfo(result, i, 'Vần lưng khớp.');
             if (getTone(curr.words[5]) !== 'trắc') {
@@ -123,8 +131,8 @@ const PoemAnalyzer = (function() {
         const c1 = result.lines[i], c2 = result.lines[i + 1];
         if (c1.words.length >= 7 && c2.words.length >= 7) {
           if (!isRhyme(c1.words[6], c2.words[6])) {
-            addError(result, i, `Hai câu song thất đầu khổ phải vần chân: "${c1.words[6]}" và "${c2.words[6]}".`);
-            addError(result, i + 1, `Hai câu song thất đầu khổ phải vần chân: "${c1.words[6]}" và "${c2.words[6]}".`);
+            addError(result, i, `Hai câu song thất đầu khổ phải vần chân: "${c1.words[6]}" và "${c2.words[6]}".${suggestRhyme(c1.words[6], 'bằng')}`);
+            addError(result, i + 1, `Hai câu song thất đầu khổ phải vần chân: "${c1.words[6]}" và "${c2.words[6]}".${suggestRhyme(c2.words[6], 'bằng')}`);
           } else {
             addInfo(result, i, 'Vần chân câu 1-2 khớp.');
             if (getTone(c1.words[6]) !== 'bằng') addWarning(result, i, `Vần chân nên thanh bằng, "${c1.words[6]}" là thanh ${getTone(c1.words[6])}.`);
@@ -136,7 +144,7 @@ const PoemAnalyzer = (function() {
         const c3 = result.lines[i + 2], c4 = result.lines[i + 3], c2 = result.lines[i + 1];
         if (c3.words.length >= 6 && c4.words.length >= 6) {
           if (!isRhyme(c3.words[5], c4.words[5])) {
-            addError(result, i + 2, `Vần lưng câu lục-bát không khớp: "${c3.words[5]}" và "${c4.words[5]}".`);
+            addError(result, i + 2, `Vần lưng câu lục-bát không khớp: "${c3.words[5]}" và "${c4.words[5]}".${suggestRhyme(c3.words[5], 'trắc')}`);
           } else {
             addInfo(result, i + 2, 'Vần lưng khớp.');
             if (getTone(c3.words[5]) !== 'trắc') addWarning(result, i + 2, `Vần lưng nên thanh trắc, "${c3.words[5]}" là thanh ${getTone(c3.words[5])}.`);
@@ -145,7 +153,7 @@ const PoemAnalyzer = (function() {
         }
         if (c2.words.length >= 7 && c4.words.length >= 8) {
           if (!isRhyme(c2.words[6], c4.words[7])) {
-            addError(result, i + 3, `Vần chân cuối khổ (câu 2 và 4) không khớp: "${c2.words[6]}" và "${c4.words[7]}".`);
+            addError(result, i + 3, `Vần chân cuối khổ (câu 2 và 4) không khớp: "${c2.words[6]}" và "${c4.words[7]}".${suggestRhyme(c4.words[7], 'bằng')}`);
           } else {
             addInfo(result, i + 3, 'Vần chân khổ khớp.');
             if (getTone(c4.words[7]) !== 'bằng') addWarning(result, i + 3, `Vần chân cuối khổ nên thanh bằng, "${c4.words[7]}" là thanh ${getTone(c4.words[7])}.`);
@@ -204,7 +212,7 @@ const PoemAnalyzer = (function() {
         const word = result.lines[pos - 1].words[6];
         if (!baseRhyme) baseRhyme = getRhyme(word, false);
         else if (!isRhyme(word, baseRhyme)) {
-          addError(result, pos - 1, `Câu ${pos} chữ cuối ("${word}") phải vần với các câu 2, 4, 6, 8.`);
+          addError(result, pos - 1, `Câu ${pos} chữ cuối ("${word}") phải vần với các câu 2, 4, 6, 8.${suggestRhyme(word, 'bằng')}`);
         } else {
           addInfo(result, pos - 1, 'Vần đúng.');
         }
@@ -244,8 +252,8 @@ const PoemAnalyzer = (function() {
     }
     if (n >= 4 && result.lines[1].wordCount >= 7 && result.lines[3].wordCount >= 7) {
       if (!isRhyme(result.lines[1].words[6], result.lines[3].words[6])) {
-        addError(result, 1, 'Câu 2 và 4 phải vần chân.');
-        addError(result, 3, 'Câu 2 và 4 phải vần chân.');
+        addError(result, 1, `Câu 2 và 4 phải vần chân.${suggestRhyme(result.lines[1].words[6], 'bằng')}`);
+        addError(result, 3, `Câu 2 và 4 phải vần chân.${suggestRhyme(result.lines[3].words[6], 'bằng')}`);
       } else {
         addInfo(result, 1, 'Vần chân khớp.');
       }
@@ -285,7 +293,7 @@ const PoemAnalyzer = (function() {
       if (pos - 1 < n && result.lines[pos - 1].wordCount === 5) {
         const w = result.lines[pos - 1].words[4];
         if (!base) base = getRhyme(w, false);
-        else if (!isRhyme(w, base)) addError(result, pos - 1, `Câu ${pos} chữ cuối ("${w}") không vần.`);
+        else if (!isRhyme(w, base)) addError(result, pos - 1, `Câu ${pos} chữ cuối ("${w}") không vần.${suggestRhyme(w, 'bằng')}`);
         else addInfo(result, pos - 1, 'Vần đúng.');
         if (getTone(w) !== 'bằng') addWarning(result, pos - 1, 'Vần chân nên thanh bằng.');
       }
